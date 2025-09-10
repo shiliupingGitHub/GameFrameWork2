@@ -21,9 +21,12 @@ namespace Game.Common
         {
             foreach (var t in st)
             {
-                var worldSubsystem = System.Activator.CreateInstance(t) as WorldSubsystem;
-                _worldSubsystems[t] = worldSubsystem;
-                worldSubsystem?.OnLoad();
+                if (!t.IsGenericType)
+                {
+                    var worldSubsystem = System.Activator.CreateInstance(t) as WorldSubsystem;
+                    _worldSubsystems[t] = worldSubsystem;
+                    worldSubsystem?.OnLoad();
+                }
             }
 
             foreach (var s in _worldSubsystems)

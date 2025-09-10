@@ -28,7 +28,7 @@ namespace Game.Common
             _allTypes = typeof(GameInstance).Assembly.GetTypes();
             foreach (var type in _allTypes)
             {
-                if (type.IsSubclassOf(typeof(GameSubsystem)))
+                if (type.IsSubclassOf(typeof(GameSubsystem)) && !type.IsGenericType)
                 {
                     _gameSubsystemTypes.Add(type);
                     var gs = System.Activator.CreateInstance(type) as GameSubsystem;
