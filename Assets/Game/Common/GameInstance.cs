@@ -1,10 +1,50 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.LowLevel;
+using UnityEngine.PlayerLoop;
 
 namespace Game.Common
 {
     public class GameInstance
     {
+        [RuntimeInitializeOnLoadMethod]
+        static void Initialize()
+        {
+           var currentLoop = PlayerLoop.GetCurrentPlayerLoop();
+           
+           // 创建自定义系统
+           var customSystem = new PlayerLoopSystem()
+           {
+               type = typeof(GameInstance),
+               updateDelegate = OnCustomUpdate
+           };
+           InsertSystem(ref currentLoop, customSystem, typeof(Update));
+           PlayerLoop.SetPlayerLoop(currentLoop);
+        }
+        private static void InsertSystem(ref PlayerLoopSystem playerLoop, 
+            PlayerLoopSystem systemToInsert, 
+            Type targetSystemType)
+        {
+            // 查找目标系统类型的位置
+            for (int i = 0; i < playerLoop.subSystemList.Length; i++)
+            {
+                if (playerLoop.subSystemList[i].type == targetSystemType)
+                {
+                    // 在目标系统的子系统中插入自定义系统
+                    var subSystems = playerLoop.subSystemList[i].subSystemList.ToList();
+                    subSystems.Add(systemToInsert);
+                    playerLoop.subSystemList[i].subSystemList = subSystems.ToArray();
+                    break;
+                }
+            }
+        }
+
+        static void OnCustomUpdate()
+        {
+           
+        }
         public static GameInstance Singleton { get; private set; }
 
         public GameInstance()
