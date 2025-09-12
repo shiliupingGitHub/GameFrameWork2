@@ -57,6 +57,7 @@ namespace Game.Core.Common
         private readonly List<System.Type> _worldSubsystemTypes = new();
         private Dictionary<System.Type, GameSubsystem> _gameSubsystems = new();
         List<World> _worlds = new();
+        public static System.Action OnQuit;
 
         public T GetSubsystem<T>() where T : GameSubsystem
         {
